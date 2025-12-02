@@ -1,0 +1,23 @@
+resilience4j:
+  retry:
+    instances:
+      basic-retry:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: false
+        retry-exceptions:
+          - java.lang.Exception
+
+      retry-on-status:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exception-predicate: com.malbano.resilience4j.samples.retry.config.RetryExceptionPredicate
+
+      retry-on-result:
+        max-attempts: 3
+        wait-duration: 500ms
+        result-predicate: com.malbano.resilience4j.samples.retry.config.RetryResultPredicate
+
+      retry-with-custom-interval:
+        max-attempts: 4
+        interval-bi-function: com.malbano.resilience4j.samples.retry.config.HttpStatusRetryInterval

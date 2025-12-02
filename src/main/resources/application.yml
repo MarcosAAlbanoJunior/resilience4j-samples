@@ -1,0 +1,32 @@
+server:
+  port: 8085
+
+spring:
+  config:
+    import:
+      - classpath:application-retry.yml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,retries
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+
+logging:
+  level:
+    com.malbano.resilience4j.samples: DEBUG
+    io.github.resilience4j: DEBUG
+
+client.api:
+  url-base: http://localhost:8085
+  path-products: /internal-api/products
+
+

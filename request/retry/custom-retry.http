@@ -1,0 +1,12 @@
+### curl request
+/*
+curl --request GET \
+ --url "http:/localhost:8085/api/retry/with-custom-interval"
+*/
+GET http://localhost:8085/api/retry/with-custom-interval?scenario=429-503-ok
+
+
+
+
+
+
