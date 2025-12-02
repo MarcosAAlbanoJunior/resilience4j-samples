@@ -1,0 +1,16 @@
+### curl request
+/*
+curl --request GET \
+ --url "http:/localhost:8085/api/retry/with-result-predicate?scenario=X"
+*/
+GET http://localhost:8085/api/retry/with-result-predicate?scenario=generating-activated-generating
+/*
+Params: generating, activated
+none = activated
+*/
+
+
+
+
+
+

@@ -1,0 +1,350 @@
+# Resilience4j Patterns - Comprehensive Sample Project
+
+A complete demonstration of Resilience4j patterns in Spring Boot, showcasing resilience strategies for building fault-tolerant distributed systems.
+
+## 🎯 Project Goals
+
+This project serves as a practical reference for implementing resilience patterns using Resilience4j. Each pattern includes:
+- Real-world use cases
+- Multiple implementation strategies
+- Configuration examples
+- Testing scenarios
+- Best practices and anti-patterns
+
+## 📚 Available Patterns
+
+### [🔄 Retry Patterns](docs/retry/RETRY_README.md)
+Handle transient failures with intelligent retry strategies.
+
+**Implementations:**
+- Basic Retry - Fixed interval retries
+- Exception Predicate Retry - Conditional retry based on HTTP status codes (429, 500, 408)
+- Result Predicate Retry - Conditional retry based on response content (GENERATING status)
+- Custom Interval Retry - Dynamic wait times per error
+
+**Best for:** Network hiccups, temporary service unavailability, rate limiting, polling async operations
+
+---
+
+### [⚡ Circuit Breaker](docs/circuit-breaker/README.md)
+*Coming soon*
+
+Prevent cascade failures by stopping requests to failing services.
+
+**Implementations:**
+- Count-Based Circuit Breaker
+- Time-Based Circuit Breaker
+- Slow Call Detection
+
+**Best for:** Protecting against downstream failures, preventing resource exhaustion
+
+---
+
+### [🚦 Rate Limiter](docs/rate-limiter/README.md)
+*Coming soon*
+
+Control the rate of requests to protect services from overload.
+
+**Implementations:**
+- Atomic Rate Limiter
+- Semaphore-Based Rate Limiter
+- Distributed Rate Limiter
+
+**Best for:** API throttling, resource protection, quota management
+
+---
+
+### [🏊 Bulkhead](docs/bulkhead/README.md)
+*Coming soon*
+
+Isolate resources to prevent failures from affecting other parts of the system.
+
+**Implementations:**
+- Semaphore Bulkhead
+- Thread Pool Bulkhead
+- Fixed Thread Pool
+
+**Best for:** Resource isolation, preventing thread starvation, multi-tenant systems
+
+---
+
+### [⏱️ Time Limiter](docs/time-limiter/README.md)
+*Coming soon*
+
+Control execution time and prevent indefinite waits.
+
+**Implementations:**
+- Simple Timeout
+- Timeout with Fallback
+- Composite Time Limiter
+
+**Best for:** Long-running operations, preventing resource blocking, SLA compliance
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Java 21+
+- Maven 3.6+
+- Spring Boot 3.5.x
+
+### Running the Application
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd resilience4j-samples
+
+# Run with Maven
+mvn spring-boot:run
+
+# Or build and run
+mvn clean package
+java -jar target/resilience4j-samples-0.0.1-SNAPSHOT.jar
+```
+
+The application starts on port `8085`.
+
+### Quick Test
+
+```bash
+# Test exception predicate retry
+curl "http://localhost:8085/api/retry/with-throw-predicate?scenario=500-500-ok"
+
+# Test result predicate retry (polling)
+curl "http://localhost:8085/api/retry/with-result-predicate?scenario=generating-generating-activated"
+
+# Check application health
+curl http://localhost:8085/actuator/health
+```
+
+## 🎯 Pattern Selection Guide
+
+Choose the right pattern based on your failure scenario:
+
+| Scenario | Pattern | Why |
+|----------|---------|-----|
+| Temporary network issues | **Retry** | Issues typically resolve quickly |
+| Service is down | **Circuit Breaker** | Prevent wasting resources on known failures |
+| Too many concurrent requests | **Bulkhead** | Isolate and limit resource usage |
+| API rate limiting | **Rate Limiter** | Control request rate proactively |
+| Slow responses | **Time Limiter** | Prevent indefinite waits |
+| Complex failure scenarios | **Combination** | Multiple patterns work together |
+
+## 🔧 Configuration
+
+### Application Configuration
+
+Main configuration in `application.yml`:
+
+```yaml
+server:
+  port: 8085
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,retries,circuitbreakers,ratelimiters
+```
+
+### Pattern-Specific Configuration
+
+Each pattern has its own configuration file:
+- `application-retry.yml` - Retry configurations
+- `application-circuit-breaker.yml` - Circuit breaker configurations
+- `application-rate-limiter.yml` - Rate limiter configurations
+- ... and more
+
+## 📊 Monitoring & Observability
+
+### Actuator Endpoints
+
+Access pattern metrics and health information:
+
+```bash
+# Application health
+curl http://localhost:8085/actuator/health
+
+# Retry metrics
+curl http://localhost:8085/actuator/retries
+
+# Circuit breaker metrics
+curl http://localhost:8085/actuator/circuitbreakers
+
+# All metrics
+curl http://localhost:8085/actuator/metrics
+```
+
+### Logging
+
+Debug logging is enabled for Resilience4j:
+
+```yaml
+logging:
+  level:
+    com.malbano.resilience4j.samples: DEBUG
+    io.github.resilience4j: DEBUG
+```
+
+## 🧪 Testing
+
+### Mock API
+
+The project includes a mock external API (`MockClientApi`) that simulates various failure scenarios:
+
+**Available scenarios:**
+- `ok` - Success response
+- `500` - Internal server error
+- `503` - Service unavailable
+- `429` - Too many requests
+- `400` - Bad request
+- `404` - Not found
+- `timeout` - Request timeout
+- `generating` - Product with GENERATING status (triggers retry)
+- `activated` - Product with ACTIVATED status (success)
+
+**Scenario format:** `status1-status2-status3`
+
+```bash
+# Example: Fail twice with 500, then succeed
+curl "http://localhost:8085/api/retry/with-throw-predicate?scenario=500-500-ok"
+
+# Example: Poll async operation until ready
+curl "http://localhost:8085/api/retry/with-result-predicate?scenario=generating-activated"
+```
+
+### HTTP Files
+
+Use the provided `.http` files in your IDE (IntelliJ, VS Code with REST Client extension) for quick testing.
+
+## 🎓 Learning Path
+
+**Recommended order for learning:**
+
+1. **Start with Retry** - Simplest pattern, foundation for understanding resilience
+2. **Circuit Breaker** - Builds on retry concepts, adds state management
+3. **Rate Limiter** - Proactive protection, different mindset
+4. **Bulkhead** - Resource isolation, concurrent requests
+5. **Time Limiter** - Timeout control, complements other patterns
+6. **Combining Patterns** - Real-world scenarios using multiple patterns
+
+## 🏆 Best Practices
+
+### General Principles
+
+1. **Start simple** - Begin with basic patterns, add complexity as needed
+2. **Monitor everything** - Use Actuator endpoints and logging
+3. **Test failure scenarios** - Don't just test happy paths
+4. **Implement fallbacks** - Always have a degradation strategy
+5. **Document configuration** - Explain why you chose specific values
+6. **Combine patterns wisely** - Some patterns work better together
+
+### Configuration Tips
+
+- Set realistic timeouts based on SLAs
+- Use exponential backoff for retries
+- Configure circuit breaker thresholds based on traffic patterns
+- Monitor and adjust based on real-world behavior
+- Consider business impact when setting limits
+
+### Anti-Patterns to Avoid
+
+❌ Using same configuration for all services  
+❌ Not implementing fallback methods  
+❌ Retrying non-idempotent operations without safeguards  
+❌ Setting retry attempts too high  
+❌ Not monitoring pattern effectiveness  
+❌ Combining too many patterns without understanding interactions
+
+## 🔄 Pattern Combinations
+
+Real-world systems often use multiple patterns together:
+
+### Common Combinations
+
+**Retry + Circuit Breaker**
+```
+Retry for transient failures → Circuit breaker for persistent failures
+```
+
+**Rate Limiter + Bulkhead**
+```
+Rate limiter controls request rate → Bulkhead isolates resources
+```
+
+**Time Limiter + Retry**
+```
+Time limiter prevents hanging → Retry handles timeouts
+```
+
+**All Patterns Together**
+```
+Rate Limiter → Bulkhead → Circuit Breaker → Retry → Time Limiter
+```
+
+## 📖 Additional Resources
+
+### Resilience4j Documentation
+- [Official Documentation](https://resilience4j.readme.io/)
+- [GitHub Repository](https://github.com/resilience4j/resilience4j)
+- [Spring Boot Integration](https://resilience4j.readme.io/docs/getting-started-3)
+
+### Pattern References
+- [Microsoft - Cloud Design Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
+- [Martin Fowler - CircuitBreaker](https://martinfowler.com/bliki/CircuitBreaker.html)
+- [Release It! by Michael Nygard](https://pragprog.com/titles/mnee2/release-it-second-edition/)
+
+### Spring Boot & Observability
+- [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html)
+- [Micrometer Metrics](https://micrometer.io/docs)
+
+## 🤝 Contributing
+
+This is a sample project for educational purposes. Contributions are welcome:
+
+1. Fork the repository
+2. Create a feature branch
+3. Add your pattern implementation
+4. Include comprehensive documentation
+5. Submit a pull request
+
+## 📝 Roadmap
+
+- [x] Retry patterns with multiple strategies
+- [ ] Circuit breaker implementations
+- [ ] Rate limiter examples
+- [ ] Bulkhead patterns
+- [ ] Time limiter strategies
+- [ ] Pattern combination examples
+- [ ] Distributed tracing integration
+- [ ] Kubernetes-ready configurations
+- [ ] Performance benchmarks
+- [ ] Interactive documentation
+
+## ⚖️ License
+
+This project is provided as-is for educational and reference purposes.
+
+---
+
+## 🚀 Ready to Start?
+
+1. **Read the pattern documentation** in the `docs/` folder
+2. **Run the application** and test the endpoints
+3. **Experiment with scenarios** using the mock API
+4. **Monitor the metrics** through Actuator
+5. **Apply to your projects** with confidence
+
+---
+
+**Note:** This is a demonstration project showcasing Resilience4j capabilities. In production environments, always:
+- Adjust configurations based on your specific requirements
+- Monitor pattern effectiveness continuously
+- Consider your SLAs and business requirements
+- Test thoroughly under realistic load conditions
+- Document your resilience strategy
+
+For detailed implementation guides, see the pattern-specific documentation in the `docs/` folder.

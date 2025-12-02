@@ -1,0 +1,17 @@
+### curl request
+/*
+curl --request GET \
+ --url "http:/localhost:8085/api/retry/with-predicate?scenario=X"
+*/
+GET http://localhost:8085/api/retry/with-predicate?scenario=timeout-503-500
+
+/*
+Params: immediate-failure, always-pending, pending-processing-success, immediate-success
+none = immediate-success
+*/
+
+
+
+
+
+

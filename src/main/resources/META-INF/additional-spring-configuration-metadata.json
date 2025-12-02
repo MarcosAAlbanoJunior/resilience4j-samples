@@ -1,0 +1,11 @@
+{
+  "properties": [
+    {
+      "name": "client.api.url-base",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "client.api.path-products",
+      "type": "java.lang.String"
+    }
+  ] }
