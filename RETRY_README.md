@@ -498,4 +498,4 @@ curl http://localhost:8085/actuator/retries
 
 ---
 
-**Next:** [Main README](../../README.md) | Experiment with scenarios | Monitor metrics
+**Next:** [Main README](README.md) | Experiment with scenarios | Monitor metrics

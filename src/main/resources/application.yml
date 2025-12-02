@@ -5,6 +5,7 @@ spring:
   config:
     import:
       - classpath:application-retry.yml
+      - classpath:application-circuit-break.yml
 
 management:
   endpoints:
@@ -28,5 +29,17 @@ logging:
 client.api:
   url-base: http://localhost:8085
   path-products: /internal-api/products
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    show-extensions: true
+    show-common-extensions: true
+  show-actuator: true
 
 

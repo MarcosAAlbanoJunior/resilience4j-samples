@@ -39,7 +39,7 @@ public class MockClientApi {
 
         int attemptNumber = globalAttemptCounter.getAndIncrement();
 
-        if (attemptNumber >= sequence.length) {
+        if (attemptNumber >= sequence.length && sequence[0].equals("ok")) {
             log.info("Sequence completed, resetting counter and returning success");
             globalAttemptCounter.set(0);
             return ResponseEntity.ok(PRODUCTS);
@@ -71,9 +71,6 @@ public class MockClientApi {
             log.error("time out");
             Thread.sleep(Duration.ofSeconds(10).toMillis());
             return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build();
-        default:
-            log.error("Internal server error ");
-            throw new RuntimeException("Internal server error");
         }
         globalAttemptCounter.set(0);
         return ResponseEntity.ok(PRODUCTS);
