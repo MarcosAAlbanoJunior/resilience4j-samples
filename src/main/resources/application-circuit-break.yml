@@ -1,0 +1,11 @@
+resilience4j:
+  circuitbreaker:
+    instances:
+      products-cb:
+        register-health-indicator: true
+        sliding-window-size: 6
+        minimum-number-of-calls: 3
+        permitted-number-of-calls-in-half-open-state: 2
+        wait-duration-in-open-state: 10s
+        failure-rate-threshold: 66
+        automatic-transition-from-open-to-half-open-enabled: true

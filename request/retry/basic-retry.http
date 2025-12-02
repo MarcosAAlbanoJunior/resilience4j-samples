@@ -3,7 +3,7 @@
 curl --request GET \
  --url "http:/localhost:8085/api/retry?scenario=X"
 */
-GET http://localhost:8085/api/retry?scenario=429-503-500
+GET http://localhost:8085/api/retry?scenario=429-503-ok
 /*
 scenarios: two-fails-then-success, always-fail
 - none = always-success

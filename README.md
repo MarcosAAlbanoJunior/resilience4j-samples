@@ -13,7 +13,7 @@ This project serves as a practical reference for implementing resilience pattern
 
 ## 📚 Available Patterns
 
-### [🔄 Retry Patterns](docs/retry/RETRY_README.md)
+### [🔄 Retry Patterns](RETRY_README.md)
 Handle transient failures with intelligent retry strategies.
 
 **Implementations:**
@@ -26,21 +26,19 @@ Handle transient failures with intelligent retry strategies.
 
 ---
 
-### [⚡ Circuit Breaker](docs/circuit-breaker/README.md)
-*Coming soon*
-
+### [⚡ Circuit Breaker](CIRCUIT_BREAKER_README.md)
 Prevent cascade failures by stopping requests to failing services.
 
 **Implementations:**
-- Count-Based Circuit Breaker
-- Time-Based Circuit Breaker
-- Slow Call Detection
+- Basic Circuit Breaker with Retry - Combined pattern for maximum resilience
+- Standalone Circuit Breaker - Pure circuit breaker protection
+- State monitoring and metrics - Real-time circuit state tracking
 
-**Best for:** Protecting against downstream failures, preventing resource exhaustion
+**Best for:** Protecting against downstream failures, preventing resource exhaustion, failing fast when service is down
 
 ---
 
-### [🚦 Rate Limiter](docs/rate-limiter/README.md)
+### [🚦 Rate Limiter](RATE_LIMITER_README.md)
 *Coming soon*
 
 Control the rate of requests to protect services from overload.
@@ -54,7 +52,7 @@ Control the rate of requests to protect services from overload.
 
 ---
 
-### [🏊 Bulkhead](docs/bulkhead/README.md)
+### [🏊 Bulkhead](BULKHEAD_README.md)
 *Coming soon*
 
 Isolate resources to prevent failures from affecting other parts of the system.
@@ -68,7 +66,7 @@ Isolate resources to prevent failures from affecting other parts of the system.
 
 ---
 
-### [⏱️ Time Limiter](docs/time-limiter/README.md)
+### [⏱️ Time Limiter](TIME_LIMITER_README.md)
 *Coming soon*
 
 Control execution time and prevent indefinite waits.
@@ -314,7 +312,7 @@ This is a sample project for educational purposes. Contributions are welcome:
 ## 📝 Roadmap
 
 - [x] Retry patterns with multiple strategies
-- [ ] Circuit breaker implementations
+- [x] Circuit breaker implementations
 - [ ] Rate limiter examples
 - [ ] Bulkhead patterns
 - [ ] Time limiter strategies
@@ -332,7 +330,7 @@ This project is provided as-is for educational and reference purposes.
 
 ## 🚀 Ready to Start?
 
-1. **Read the pattern documentation** in the `docs/` folder
+1. **Read the pattern documentation** - Check RETRY_README.md, CIRCUIT_BREAKER_README.md, etc.
 2. **Run the application** and test the endpoints
 3. **Experiment with scenarios** using the mock API
 4. **Monitor the metrics** through Actuator
@@ -347,4 +345,4 @@ This project is provided as-is for educational and reference purposes.
 - Test thoroughly under realistic load conditions
 - Document your resilience strategy
 
-For detailed implementation guides, see the pattern-specific documentation in the `docs/` folder.
+For detailed implementation guides, see the pattern-specific README files in the project root.
