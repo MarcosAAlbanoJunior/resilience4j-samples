@@ -17,13 +17,13 @@ public class BasicRetryService {
     private final ProductsApiClient fakeExternalApiClient;
 
     /**
-     * Service demonstrating basic retry mechanism with fixed wait duration.
-     * Configuration: application-retry.yml -> resilience4j.retry.instances.basic-retry
-     * Retry behavior:
-     * - Retries on any exception thrown by the external API
-     * - Uses fixed wait duration between attempts
-     * - No exponential backoff
-     * - Falls back to empty list after max attempts exhausted
+     * Service demonstrating basic retry mechanism with fixed wait duration.<br>
+     * Configuration: application-retry.yml -> resilience4j.retry.instances.basic-retry<br>
+     * Retry behavior:<br>
+     * - Retries on any exception thrown by the external API<br>
+     * - Uses fixed wait duration between attempts<br>
+     * - No exponential backoff<br>
+     * - Falls back to empty list after max attempts exhausted<br>
      */
     @Retry(name = "basic-retry", fallbackMethod = "fallbackMethod")
     public List<Product> basicRetryExample(String scenario) {
