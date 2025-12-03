@@ -39,16 +39,16 @@ Prevent cascade failures by stopping requests to failing services.
 ---
 
 ### [🚦 Rate Limiter](RATE_LIMITER_README.md)
-*Coming soon*
-
 Control the rate of requests to protect services from overload.
 
 **Implementations:**
-- Atomic Rate Limiter
-- Semaphore-Based Rate Limiter
-- Distributed Rate Limiter
+- Basic Rate Limiter - Fail-fast approach (5 req/10s, timeout: 0s)
+- Rate Limiter with Wait - Queue requests and wait for permission (3 req/10s, timeout: 5s)
+- Per-User Rate Limiter - Dynamic instances with independent quotas per user (5 req/15s per user)
 
-**Best for:** API throttling, resource protection, quota management
+**Best for:** API throttling, resource protection, quota management, multi-tenant systems, fair usage policies
+
+---
 
 ---
 
@@ -313,7 +313,7 @@ This is a sample project for educational purposes. Contributions are welcome:
 
 - [x] Retry patterns with multiple strategies
 - [x] Circuit breaker implementations
-- [ ] Rate limiter examples
+- [x] Rate limiter examples
 - [ ] Bulkhead patterns
 - [ ] Time limiter strategies
 - [ ] Pattern combination examples

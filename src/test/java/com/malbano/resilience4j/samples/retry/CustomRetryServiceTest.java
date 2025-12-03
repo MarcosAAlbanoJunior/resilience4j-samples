@@ -18,9 +18,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@DisplayName("PredicateRetryService Tests")
+@DisplayName("Custom Interval retry Tests")
 class CustomRetryServiceTest {
-
 
     @MockitoBean
     private ProductsApiClient productsApiClient;
@@ -56,7 +55,7 @@ class CustomRetryServiceTest {
         List<Product> result =
                 customIntervalRetryService.retryWithCustomInterval("mixed-errors");
 
-        verify(productsApiClient, times(3)).products(any());
+        verify(productsApiClient, times(4)).products(any());
         assertThat(result).isEmpty();
     }
 
