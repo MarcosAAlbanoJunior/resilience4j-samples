@@ -1,0 +1,14 @@
+resilience4j:
+  bulkhead:
+    instances:
+      semaphore-bulkhead:
+        max-concurrent-calls: 3
+        max-wait-duration: 2s
+
+  thread-pool-bulkhead:
+    instances:
+      thread-pool-bulkhead:
+        core-thread-pool-size: 2     # 2 threads always alive
+        max-thread-pool-size: 4      # Max 4 threads
+        queue-capacity: 5          # 5 tasks can wait in queue
+        keep-alive-duration: 20ms

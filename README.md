@@ -50,19 +50,14 @@ Control the rate of requests to protect services from overload.
 
 ---
 
----
-
-### [🏊 Bulkhead](BULKHEAD_README.md)
-*Coming soon*
-
-Isolate resources to prevent failures from affecting other parts of the system.
+### [🛡️ Bulkhead](BULKHEAD_README.md)
+Isolate resources to prevent failures from cascading across your system.
 
 **Implementations:**
-- Semaphore Bulkhead
-- Thread Pool Bulkhead
-- Fixed Thread Pool
+- Semaphore Bulkhead - Lightweight concurrency control (3 concurrent calls, 2s wait)
+- Thread Pool Bulkhead - Complete thread isolation (2-4 threads, queue: 5)
 
-**Best for:** Resource isolation, preventing thread starvation, multi-tenant systems
+**Best for:** Multi-tenant systems, external API isolation, preventing thread starvation, resource protection, mixed workload separation
 
 ---
 
@@ -114,6 +109,9 @@ curl "http://localhost:8085/api/retry/with-throw-predicate?scenario=500-500-ok"
 # Test result predicate retry (polling)
 curl "http://localhost:8085/api/retry/with-result-predicate?scenario=generating-generating-activated"
 
+# Test thread pool bulkhead
+curl "http://localhost:8085/api/bulkhead/threadpool"
+
 # Check application health
 curl http://localhost:8085/actuator/health
 ```
@@ -131,7 +129,7 @@ Choose the right pattern based on your failure scenario:
 | Slow responses | **Time Limiter** | Prevent indefinite waits |
 | Complex failure scenarios | **Combination** | Multiple patterns work together |
 
-## 🔧 Configuration
+## 📧 Configuration
 
 ### Application Configuration
 
@@ -145,7 +143,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,metrics,retries,circuitbreakers,ratelimiters
+        include: health,metrics,retries,circuitbreakers,ratelimiters,bulkheads
 ```
 
 ### Pattern-Specific Configuration
@@ -154,6 +152,7 @@ Each pattern has its own configuration file:
 - `application-retry.yml` - Retry configurations
 - `application-circuit-breaker.yml` - Circuit breaker configurations
 - `application-rate-limiter.yml` - Rate limiter configurations
+- `application-bulkhead.yml` - Bulkhead configurations
 - ... and more
 
 ## 📊 Monitoring & Observability
@@ -171,6 +170,15 @@ curl http://localhost:8085/actuator/retries
 
 # Circuit breaker metrics
 curl http://localhost:8085/actuator/circuitbreakers
+
+# Rate limiter metrics
+curl http://localhost:8085/actuator/ratelimiters
+
+# Bulkhead metrics
+curl http://localhost:8085/actuator/bulkheads
+
+# Thread pool bulkhead metrics
+curl http://localhost:8085/actuator/threadpoolbulkheads
 
 # All metrics
 curl http://localhost:8085/actuator/metrics
@@ -245,6 +253,7 @@ Use the provided `.http` files in your IDE (IntelliJ, VS Code with REST Client e
 - Set realistic timeouts based on SLAs
 - Use exponential backoff for retries
 - Configure circuit breaker thresholds based on traffic patterns
+- Size bulkhead thread pools appropriately for expected load
 - Monitor and adjust based on real-world behavior
 - Consider business impact when setting limits
 
@@ -255,9 +264,11 @@ Use the provided `.http` files in your IDE (IntelliJ, VS Code with REST Client e
 ❌ Retrying non-idempotent operations without safeguards  
 ❌ Setting retry attempts too high  
 ❌ Not monitoring pattern effectiveness  
-❌ Combining too many patterns without understanding interactions
+❌ Combining too many patterns without understanding interactions  
+❌ Using semaphore bulkhead for slow blocking operations  
+❌ Undersizing thread pools in bulkhead pattern
 
-## 🔄 Pattern Combinations
+## 📄 Pattern Combinations
 
 Real-world systems often use multiple patterns together:
 
@@ -278,10 +289,35 @@ Rate limiter controls request rate → Bulkhead isolates resources
 Time limiter prevents hanging → Retry handles timeouts
 ```
 
+**Bulkhead + Circuit Breaker + Retry**
+```
+Bulkhead isolates → Circuit breaker fails fast → Retry recovers
+```
+
 **All Patterns Together**
 ```
 Rate Limiter → Bulkhead → Circuit Breaker → Retry → Time Limiter
 ```
+
+### Example: Comprehensive Protection
+
+```java
+@Service
+public class ResilientService {
+    
+    @RateLimiter(name = "external-api")           // Control request rate
+    @Bulkhead(name = "external-api",              // Isolate resources
+              type = Bulkhead.Type.THREADPOOL)
+    @CircuitBreaker(name = "external-api")        // Fail fast when down
+    @Retry(name = "external-api")                 // Retry transient failures
+    @TimeLimiter(name = "external-api")           // Prevent hanging
+    public CompletableFuture<Response> callExternalApi() {
+        return externalClient.call();
+    }
+}
+```
+
+**Execution order:** Retry → CircuitBreaker → RateLimiter → Bulkhead → TimeLimiter → Method
 
 ## 📖 Additional Resources
 
@@ -314,7 +350,7 @@ This is a sample project for educational purposes. Contributions are welcome:
 - [x] Retry patterns with multiple strategies
 - [x] Circuit breaker implementations
 - [x] Rate limiter examples
-- [ ] Bulkhead patterns
+- [x] Bulkhead patterns (Semaphore and Thread Pool)
 - [ ] Time limiter strategies
 - [ ] Pattern combination examples
 - [ ] Distributed tracing integration
@@ -330,7 +366,7 @@ This project is provided as-is for educational and reference purposes.
 
 ## 🚀 Ready to Start?
 
-1. **Read the pattern documentation** - Check RETRY_README.md, CIRCUIT_BREAKER_README.md, etc.
+1. **Read the pattern documentation** - Check RETRY_README.md, CIRCUIT_BREAKER_README.md, BULKHEAD_README.md, etc.
 2. **Run the application** and test the endpoints
 3. **Experiment with scenarios** using the mock API
 4. **Monitor the metrics** through Actuator
