@@ -49,28 +49,32 @@ public class MockClientApi {
         log.info("Global Attempt {} - Returning status: {}", attemptNumber + 1, currentStatus);
 
         switch (currentStatus) {
-        case "ok":
-            log.info("SUCCESS OK ");
-            break;
-        case "429":
-            log.error("error 429");
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
-        case "400":
-            log.error("error 400");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        case "404":
-            log.error("error 404");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        case "500":
-            log.error("error 500");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        case "503":
-            log.error("error 503");
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-        case "timeout":
-            log.error("time out");
-            Thread.sleep(Duration.ofSeconds(10).toMillis());
-            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build();
+            case "ok":
+                log.info("SUCCESS OK");
+                break;
+            case "wait3":
+                log.info("WAITING 3s");
+                Thread.sleep(3000);
+                break;
+            case "429":
+                log.error("error 429");
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+            case "400":
+                log.error("error 400");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            case "404":
+                log.error("error 404");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            case "500":
+                log.error("error 500");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            case "503":
+                log.error("error 503");
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            case "timeout":
+                log.error("time out");
+                Thread.sleep(Duration.ofSeconds(10).toMillis());
+                return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build();
         }
         globalAttemptCounter.set(0);
         return ResponseEntity.ok(PRODUCTS);
