@@ -62,16 +62,13 @@ Isolate resources to prevent failures from cascading across your system.
 ---
 
 ### [⏱️ Time Limiter](TIME_LIMITER_README.md)
-*Coming soon*
-
 Control execution time and prevent indefinite waits.
 
 **Implementations:**
-- Simple Timeout
-- Timeout with Fallback
-- Composite Time Limiter
+- Stoppable Time Limiter - Cancels task on timeout (2s timeout, cancel-running-future: true)
+- Unstoppable Time Limiter - Task continues after timeout (2s timeout, cancel-running-future: false)
 
-**Best for:** Long-running operations, preventing resource blocking, SLA compliance
+**Best for:** Long-running operations, preventing resource blocking, SLA compliance, external API calls with timeouts
 
 ---
 
@@ -87,7 +84,7 @@ Control execution time and prevent indefinite waits.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/MarcosAAlbanoJunior/resilience4j-samples.git
 cd resilience4j-samples
 
 # Run with Maven
@@ -111,6 +108,12 @@ curl "http://localhost:8085/api/retry/with-result-predicate?scenario=generating-
 
 # Test thread pool bulkhead
 curl "http://localhost:8085/api/bulkhead/threadpool"
+
+# Test time limiter stoppable
+curl "http://localhost:8085/api/time-limiter/stoppable?scenario=ok"
+
+# Test time limiter unstoppable
+curl "http://localhost:8085/api/time-limiter/unstoppable?scenario=wait3"
 
 # Check application health
 curl http://localhost:8085/actuator/health
@@ -153,6 +156,7 @@ Each pattern has its own configuration file:
 - `application-circuit-breaker.yml` - Circuit breaker configurations
 - `application-rate-limiter.yml` - Rate limiter configurations
 - `application-bulkhead.yml` - Bulkhead configurations
+- `application-time-limiter.yml` - Time limiter configurations
 - ... and more
 
 ## 📊 Monitoring & Observability
@@ -179,6 +183,9 @@ curl http://localhost:8085/actuator/bulkheads
 
 # Thread pool bulkhead metrics
 curl http://localhost:8085/actuator/threadpoolbulkheads
+
+# Time limiter metrics
+curl http://localhost:8085/actuator/timelimiters
 
 # All metrics
 curl http://localhost:8085/actuator/metrics
@@ -351,7 +358,7 @@ This is a sample project for educational purposes. Contributions are welcome:
 - [x] Circuit breaker implementations
 - [x] Rate limiter examples
 - [x] Bulkhead patterns (Semaphore and Thread Pool)
-- [ ] Time limiter strategies
+- [x] Time limiter strategies (Stoppable and Unstoppable)
 - [ ] Pattern combination examples
 - [ ] Distributed tracing integration
 - [ ] Kubernetes-ready configurations
@@ -366,7 +373,7 @@ This project is provided as-is for educational and reference purposes.
 
 ## 🚀 Ready to Start?
 
-1. **Read the pattern documentation** - Check RETRY_README.md, CIRCUIT_BREAKER_README.md, BULKHEAD_README.md, etc.
+1. **Read the pattern documentation** - Check RETRY_README.md, CIRCUIT_BREAKER_README.md, RATE_LIMITER_README.md, BULKHEAD_README.md, TIME_LIMITER_README.md
 2. **Run the application** and test the endpoints
 3. **Experiment with scenarios** using the mock API
 4. **Monitor the metrics** through Actuator
