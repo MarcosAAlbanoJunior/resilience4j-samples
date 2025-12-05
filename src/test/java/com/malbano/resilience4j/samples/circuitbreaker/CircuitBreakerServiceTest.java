@@ -1,6 +1,6 @@
-package com.malbano.resilience4j.samples.circuitbreak;
+package com.malbano.resilience4j.samples.circuitbreaker;
 
-import com.malbano.resilience4j.samples.circuitbreak.service.CircuitBreakService;
+import com.malbano.resilience4j.samples.circuitbreaker.service.CircuitBreakerService;
 import com.malbano.resilience4j.samples.commum.client.ProductsApiClient;
 import com.malbano.resilience4j.samples.commum.exception.HttpStatusException;
 import com.malbano.resilience4j.samples.commum.model.Product;
@@ -23,13 +23,13 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @DisplayName("CircuitBreakService Tests")
-class CircuitBreakServiceTest {
+class CircuitBreakerServiceTest {
 
     @MockitoBean
     private ProductsApiClient productsApiClient;
 
     @Autowired
-    private CircuitBreakService circuitBreakService;
+    private CircuitBreakerService circuitBreakerService;
 
     @Autowired
     private CircuitBreakerRegistry circuitBreakerRegistry;
@@ -50,7 +50,7 @@ class CircuitBreakServiceTest {
                         Product.builder().id(2).build()
                 ));
 
-        List<Product> result = circuitBreakService.getProducts(true);
+        List<Product> result = circuitBreakerService.getProducts(true);
 
         verify(productsApiClient, times(1)).products("ok");
         assertThat(result).hasSize(2);
@@ -63,7 +63,7 @@ class CircuitBreakServiceTest {
         when(productsApiClient.products("429"))
                 .thenThrow(new HttpStatusException(HttpStatus.TOO_MANY_REQUESTS));
 
-        assertThatThrownBy(() -> circuitBreakService.getProducts(false))
+        assertThatThrownBy(() -> circuitBreakerService.getProducts(false))
                 .isInstanceOf(ResponseStatusException.class);
 
         verify(productsApiClient, times(1)).products("429");
@@ -78,12 +78,12 @@ class CircuitBreakServiceTest {
 
         for (int i = 0; i < 3; i++) {
             try {
-                circuitBreakService.getProducts(false);
+                circuitBreakerService.getProducts(false);
             } catch (Exception e) {
             }
         }
 
-        assertThatThrownBy(() -> circuitBreakService.getProducts(false))
+        assertThatThrownBy(() -> circuitBreakerService.getProducts(false))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("Service temporarily unavailable");
 
@@ -99,15 +99,15 @@ class CircuitBreakServiceTest {
         when(productsApiClient.products("429"))
                 .thenThrow(new HttpStatusException(HttpStatus.TOO_MANY_REQUESTS));
 
-        circuitBreakService.getProducts(true);
-        circuitBreakService.getProducts(true);
+        circuitBreakerService.getProducts(true);
+        circuitBreakerService.getProducts(true);
 
         try {
-            circuitBreakService.getProducts(false);
+            circuitBreakerService.getProducts(false);
         } catch (Exception e) {
         }
 
-        List<Product> result = circuitBreakService.getProducts(true);
+        List<Product> result = circuitBreakerService.getProducts(true);
 
         verify(productsApiClient, times(3)).products("ok");
         verify(productsApiClient, times(1)).products("429");

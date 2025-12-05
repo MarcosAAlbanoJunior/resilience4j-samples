@@ -8,6 +8,7 @@ spring:
       - classpath:application-circuit-break.yml
       - classpath:application-rate-limiter.yml
       - classpath:application-bulkhead.yml
+      - classpath:application-time-limiter.yml
 
 management:
   endpoints:

@@ -1,6 +1,6 @@
-package com.malbano.resilience4j.samples.circuitbreak.controller;
+package com.malbano.resilience4j.samples.circuitbreaker.controller;
 
-import com.malbano.resilience4j.samples.circuitbreak.service.CircuitBreakService;
+import com.malbano.resilience4j.samples.circuitbreaker.service.CircuitBreakerService;
 import com.malbano.resilience4j.samples.commum.model.Product;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/circuit-break")
+@RequestMapping("/api/circuit-breaker")
 @RequiredArgsConstructor
-public class CircuitBreakController {
+public class CircuitBreakerController {
 
     private final CircuitBreakerRegistry circuitBreakerRegistry;
-    private final CircuitBreakService circuitBreakService;
+    private final CircuitBreakerService circuitBreakerService;
 
     @Operation(
             summary = "Demonstrates Circuit Breaker in action",
@@ -41,7 +41,7 @@ public class CircuitBreakController {
     )
     @GetMapping
     public ResponseEntity<List<Product>> circuitBreak(@RequestParam Boolean success) {
-        return ResponseEntity.ok(circuitBreakService.getProducts(success));
+        return ResponseEntity.ok(circuitBreakerService.getProducts(success));
     }
 
     @Operation(
