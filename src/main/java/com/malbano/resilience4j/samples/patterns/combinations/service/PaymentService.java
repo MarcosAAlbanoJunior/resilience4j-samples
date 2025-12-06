@@ -21,6 +21,33 @@ public class PaymentService {
 
     private final PaymentGatewayClient paymentGatewayClient;
 
+    /**
+     * Processes payments combining three resilience patterns in layers.<br>
+     * Configuration: application-payment-example.yml<br>
+     * <br>
+     * Execution order (aspect-order):<br>
+     * 1. TimeLimiter (order=1) - Controls maximum execution time (7s)<br>
+     * 2. CircuitBreaker (order=2) - Prevents calls when gateway is unstable<br>
+     * 3. Retry (order=3) - Retries on transient failures<br>
+     * <br>
+     * TimeLimiter:<br>
+     * - 7 seconds timeout per attempt<br>
+     * - Cancels execution if limit is exceeded<br>
+     * - Fallback returns payment with PENDING status<br>
+     * <br>
+     * CircuitBreaker:<br>
+     * - Sliding window of 5 calls<br>
+     * - Opens circuit if 60% of calls fail<br>
+     * - Remains open for 10 seconds<br>
+     * - Allows 2 calls in half-open state to test recovery<br>
+     * - Considers slow calls (>4s) as failure if 50% threshold is reached<br>
+     * <br>
+     * Retry:<br>
+     * - Maximum of 3 attempts<br>
+     * - Fixed interval of 1 second between attempts<br>
+     * - Retries on: HttpServerErrorException, TimeoutException, RetryableException<br>
+     * - Ignores: BadRequest (client error, no point in retrying)<br>
+     */
     @TimeLimiter(name = "paymentTimeout", fallbackMethod = "timeoutFallback")
     @CircuitBreaker(name = "paymentCircuit", fallbackMethod = "circuitBreakerFallback")
     @Retry(name = "paymentRetry")
