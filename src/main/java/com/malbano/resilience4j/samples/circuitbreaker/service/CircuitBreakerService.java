@@ -1,4 +1,4 @@
-package com.malbano.resilience4j.samples.circuitbreak.service;
+package com.malbano.resilience4j.samples.circuitbreaker.service;
 
 import com.malbano.resilience4j.samples.commum.client.ProductsApiClient;
 import com.malbano.resilience4j.samples.commum.exception.HttpStatusException;
@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CircuitBreakService {
+public class CircuitBreakerService {
 
     private final ProductsApiClient productsApiClient;
 
