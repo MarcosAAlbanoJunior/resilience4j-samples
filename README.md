@@ -97,6 +97,19 @@ java -jar target/resilience4j-samples-0.0.1-SNAPSHOT.jar
 
 The application starts on port `8085`.
 
+### 📖 API Documentation
+
+Access the interactive Swagger UI to explore and test all available endpoints:
+```
+http://localhost:8085/swagger-ui/index.html
+```
+
+The Swagger interface provides:
+- Complete API documentation
+- Interactive endpoint testing
+- Request/response examples
+- Schema definitions
+
 ### Quick Test
 
 ```bash
