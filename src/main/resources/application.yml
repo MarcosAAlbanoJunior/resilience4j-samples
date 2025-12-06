@@ -9,6 +9,7 @@ spring:
       - classpath:application-rate-limiter.yml
       - classpath:application-bulkhead.yml
       - classpath:application-time-limiter.yml
+      - classpath:application-payment-example.yml
 
 management:
   endpoints:
@@ -33,6 +34,8 @@ logging:
 client.api:
   url-base: http://localhost:8085
   path-products: /internal-api/products
+  path-payment: /internal-api/payment
+  path-database: /internal-api/database/reports
 
 springdoc:
   api-docs:
