@@ -352,22 +352,6 @@ This is a sample project for educational purposes. Contributions are welcome:
 4. Include comprehensive documentation
 5. Submit a pull request
 
-## 📝 Roadmap
-
-- [x] Retry patterns with multiple strategies
-- [x] Circuit breaker implementations
-- [x] Rate limiter examples
-- [x] Bulkhead patterns (Semaphore and Thread Pool)
-- [x] Time limiter strategies (Stoppable and Unstoppable)
-- [ ] Pattern combination examples
-- [ ] Distributed tracing integration
-- [ ] Kubernetes-ready configurations
-- [ ] Performance benchmarks
-- [ ] Interactive documentation
-
-## ⚖️ License
-
-This project is provided as-is for educational and reference purposes.
 
 ---
 

@@ -1,0 +1,38 @@
+resilience4j:
+  retry:
+    retry-aspect-order: 3
+    instances:
+      paymentRetry:
+        max-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - feign.RetryableException
+          - com.malbano.resilience4j.samples.commum.exception.HttpStatusException
+        ignore-exceptions:
+          - org.springframework.web.client.HttpClientErrorException.BadRequest
+
+  timelimiter:
+    time-limiter-aspect-order: 1
+    instances:
+      paymentTimeout:
+        timeout-duration: 7s
+        cancel-running-future: true
+
+  circuitbreaker:
+    circuit-breaker-aspect-order: 2
+    instances:
+      paymentCircuit:
+        sliding-window-size: 5
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        slow-call-duration-threshold: 4s
+        slow-call-rate-threshold: 50
+        record-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.util.concurrent.TimeoutException
+          - com.malbano.resilience4j.samples.commum.exception.HttpStatusException
